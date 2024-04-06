@@ -39,8 +39,35 @@ public class QuestionService {
         return new ResponseEntity<>("Question added successfully", HttpStatus.CREATED);
     }
 
-    public String deleteQuestion(Integer id) {
-        questionDao.deleteById(id);
-        return  "Deleted";
+    public ResponseEntity<String> deleteQuestion(Integer id) {
+        try {
+            questionDao.deleteById(id);
+            return new ResponseEntity<>("Deleted Successfully", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Question does not exist", HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<String> updateQuestion(Integer id, Question question) {
+        try{
+            Question questionInDB = questionDao.findById(id).get();
+
+            questionInDB.setQuestionTitle(question.getQuestionTitle());
+            questionInDB.setOption1(question.getOption1());
+            questionInDB.setOption2(question.getOption2());
+            questionInDB.setOption3(question.getOption3());
+            questionInDB.setOption4(question.getOption4());
+            questionInDB.setRightAnswer(question.getRightAnswer());
+            questionInDB.setDifficultyLevel(question.getDifficultyLevel());
+            questionInDB.setCategory(question.getCategory());
+
+            questionDao.save(questionInDB);
+            return new ResponseEntity<>("Updated Successfully", HttpStatus.OK);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Could not update", HttpStatus.BAD_REQUEST);
     }
 }
